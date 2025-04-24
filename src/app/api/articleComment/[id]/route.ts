@@ -12,30 +12,10 @@ export async function DELETE(
     return NextResponse.error();
   }
 
-  const articleCategory = await prisma.articleCategory.delete({
+  const articleComments = await prisma.articleReview.delete({
     where: { id: params.id },
   });
-  return NextResponse.json(articleCategory);
-}
-
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  const currentUser = await getCurrentUser();
-
-  if (!currentUser || currentUser.role !== "ADMIN") {
-    return NextResponse.error();
-  }
-
-  const body = await request.json();
-  const { name, description, icon, isActive, slug } = body;
-
-  const articleCategory = await prisma.articleCategory.update({
-    where: { id: params.id },
-    data: { name, description, icon, isActive, slug },
-  });
-  return NextResponse.json(articleCategory);
+  return NextResponse.json(articleComments);
 }
 
 export async function GET(
@@ -49,17 +29,17 @@ export async function GET(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const articleCategory = await prisma.articleCategory.findUnique({
+    const articleComments = await prisma.articleReview.findUnique({
       where: { id: params.id },
     });
 
-    if (!articleCategory) {
-      return new NextResponse("Không tìm thấy danh mục bài viết!", {
+    if (!articleComments) {
+      return new NextResponse("Không tìm thấy bình luận bài viết!", {
         status: 404,
       });
     }
 
-    return NextResponse.json(articleCategory);
+    return NextResponse.json(articleComments);
   } catch (error) {
     console.error("Lỗi:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
